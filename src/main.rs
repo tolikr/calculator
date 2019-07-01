@@ -4,7 +4,7 @@ fn main() {
     println!("Hello! Let's manipulate some numbers.");
 
     let first: f32 = get_number("first");
-    let operation = get_operation();
+    let operation: Operation = get_operation();
     let second: f32 = get_number("second");
 
     make_operation(first, operation, second);
