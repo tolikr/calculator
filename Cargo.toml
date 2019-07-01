@@ -1,7 +1,7 @@
 [package]
 name = "calculator"
 version = "0.1.0"
-authors = ["Ботов Анатолий <btolikbotov@mail.ru>"]
+authors = ["Ботов Анатолий <tolikbotov@mail.ru>"]
 edition = "2018"
 
 [dependencies]
