@@ -32,7 +32,7 @@ fn get_operation() -> Operation {
         "-" => Operation::Minus,
         "/" => Operation::Division,
         "*" => Operation::Multiplication,
-        _ => panic!("Error")
+        _ => panic!("Unsupported operation.")
     }
 }
 
@@ -56,7 +56,7 @@ fn read() -> String {
 }
 
 fn parse(string: String) -> f32 {
-    string.trim().parse().unwrap()
+    string.trim().parse().expect("Cannot parse string to number")
 }
 
 enum Operation {
