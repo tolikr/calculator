@@ -15,20 +15,25 @@ fn main() {
     while continue_work {
         println!("Type an expression, for example 2+1 and hit Enter: ");
         println!("Type `exit` to exit.");
-        let input: String = read();
+        let input = read();
+        let trimmed = input.trim();
 
-        continue_work = !"exit".eq_ignore_ascii_case(&input);
+        continue_work = !("exit" == trimmed);
 
-        println!("Result {} input {}", continue_work, input);
+        println!("Result {} input {}", continue_work, trimmed);
 
         if (continue_work) {
-            let (first, rest) = parse_digit(&input);
-            let (operation, rest2) = parse_operation(&rest);
-            let (second, rest3) = parse_digit(&rest2);
-
-            make_operation(first, operation, second);
+            main_action(&trimmed);
         }
     }
+}
+
+fn main_action(input: &str) {
+    let (first, rest) = parse_digit(&input);
+    let (operation, rest2) = parse_operation(&rest);
+    let (second, rest3) = parse_digit(&rest2);
+
+    make_operation(first, operation, second);
 }
 
 fn parse_digit(input: &str) -> (f32, String) {
@@ -90,9 +95,4 @@ enum Operation {
     Minus,
     Division,
     Multiplication,
-}
-
-trait RunLoop {
-
-    fn run_loop(input: &str);
 }
