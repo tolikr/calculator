@@ -91,3 +91,8 @@ enum Operation {
     Division,
     Multiplication,
 }
+
+trait RunLoop {
+
+    fn run_loop(input: &str);
+}
