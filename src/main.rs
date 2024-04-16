@@ -9,12 +9,11 @@ use std::{
 
 fn main() {
     println!("Hello! Let's manipulate some numbers.");
+    println!("Type an expression, for example 2+1+34 and hit Enter. Type `exit` to exit.");
 
     let mut continue_work: bool = true;
 
     while continue_work {
-        println!("Type an expression, for example 2+1+34 and hit Enter: ");
-        println!("Type `exit` to exit.");
         let input = read();
         let trimmed = input.trim();
 
@@ -32,8 +31,6 @@ fn main_action(input: &str) {
     if expression.is_empty() {
         print!("Print something")
     } else {
-        let mut was_digit = false;
-        let mut digit: Option<f32> = None;
         let mut operation: Operation = Operation::Plus;
         let mut result: Option<f32> = None;
 
