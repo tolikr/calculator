@@ -1,11 +1,8 @@
-use core::slice;
-use regex::Match;
-use regex::Regex;
-use std::{
-    io::{self, Read},
-    thread::sleep,
-    time,
-};
+use read_utils::reader;
+use read_utils::ExpressionPart;
+use read_utils::Operation;
+
+mod read_utils;
 
 fn main() {
     println!("Hello! Let's manipulate some numbers.");
@@ -14,7 +11,7 @@ fn main() {
     let mut continue_work: bool = true;
 
     while continue_work {
-        let input = read();
+        let input = read_utils::read_string();
         let trimmed = input.trim();
 
         continue_work = !("exit" == trimmed);
@@ -26,7 +23,7 @@ fn main() {
 }
 
 fn main_action(input: &str) {
-    let expression: Vec<Expression_Part> = loop_parse(&input, Vec::new());
+    let expression: Vec<ExpressionPart> = loop_parse(&input, Vec::new());
 
     if expression.is_empty() {
         print!("Print something")
@@ -36,14 +33,14 @@ fn main_action(input: &str) {
 
         for d in expression {
             match d {
-                Expression_Part::Digit(d) =>
+                ExpressionPart::Digit(d) =>
                     match result {
                         None => result = Some(d),
                         Some(r) => {
                             result = Some(make_operation(r, &operation, d));
                         }
                     },
-                Expression_Part::Operation(o) => operation = o
+                ExpressionPart::Operation(o) => operation = o
             }
         }
 
@@ -55,7 +52,7 @@ fn main_action(input: &str) {
     }
 }
 
-fn loop_parse(input: &str, mut expression: Vec<Expression_Part>) -> Vec<Expression_Part> {
+fn loop_parse(input: &str, mut expression: Vec<ExpressionPart>) -> Vec<ExpressionPart> {
     if input.is_empty() {
         expression
     } else {
@@ -65,91 +62,11 @@ fn loop_parse(input: &str, mut expression: Vec<Expression_Part>) -> Vec<Expressi
     }
 }
 
-fn reader(input: &str) -> (Expression_Part, String) {
-    // TODO make it a component
-    let digit = Regex::new(r"^\d+\s*").unwrap();
-    // TODO make it a component
-    let operation = Regex::new(r"^[+-/*]\s*").unwrap();
-
-    digit
-        .find(input)
-        .map(|matched| {
-            (
-                Expression_Part::Digit(matched.as_str().trim().parse::<f32>().unwrap()),
-                get_rest(&input, matched),
-            )
-        })
-        .or(operation.find(input).map(|matched| {
-            (
-                Expression_Part::Operation(parse_operation(matched.as_str().trim())),
-                get_rest(&input, matched),
-            )
-        }))
-        .unwrap()
-}
-
-fn parse_operation(str: &str) -> Operation {
-    match str {
-        "+" => Operation::Plus,
-        "-" => Operation::Minus,
-        "/" => Operation::Division,
-        "*" => Operation::Multiplication,
-        _ => panic!("Unsupported operation."),
-    }
-}
-
-fn get_rest(input: &str, matched: Match<'_>) -> String {
-    let (_, rest) = input.split_at(matched.end());
-
-    rest.to_string()
-}
-
 fn make_operation(first: f32, operation: &Operation, second: f32) -> f32 {
     match operation {
         Operation::Multiplication => first * second,
         Operation::Division => first / second,
         Operation::Minus => first - second,
         Operation::Plus => first + second,
-    }
-}
-
-fn read() -> String {
-    let mut string: String = String::new();
-
-    io::stdin()
-        .read_line(&mut string)
-        .expect("Failed to read line");
-    string
-}
-
-enum Operation {
-    Plus,
-    Minus,
-    Division,
-    Multiplication,
-}
-
-impl std::fmt::Display for Operation {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Operation::Plus => write!(f, "+"),
-            Operation::Minus => write!(f, "-"),
-            Operation::Division => write!(f, "/"),
-            Operation::Multiplication => write!(f, "*"),
-        }
-    }
-}
-
-enum Expression_Part {
-    Digit(f32),
-    Operation(Operation),
-}
-
-impl std::fmt::Display for Expression_Part {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Expression_Part::Digit(d) => write!(f, "{}", d),
-            Expression_Part::Operation(o) => write!(f, "{}", o),
-        }
     }
 }
